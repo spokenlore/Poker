@@ -7,7 +7,7 @@ def checkFlush(suits):
 	return True
 
 def checkStraight(cards):
-	if cards[0]+4 == cards[1]+3 == cards[2]+2 == cards[3]+1 == cards[4]:
+	if int(cards[0])+4 == int(cards[1])+3 == int(cards[2])+2 == int(cards[3])+1 == int(cards[4]):
 		return True
 	else:
 		return False
@@ -45,3 +45,15 @@ def checkPair(cards):
 		return True
 	else:
 		return False
+
+def convert(card):
+	if card == 14:
+		return 'A'
+	elif card == 13:
+		return 'K'
+	elif card == 12:
+		return 'Q'
+	elif card == 11:
+		return 'J'
+	else:
+		return card

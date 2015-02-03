@@ -41,19 +41,28 @@ class Hand:
 		arr.append(self.card5.num)
 		return arr
 
+	def num(self):
+		arr = []
+		arr.append(self.card1.card)
+		arr.append(self.card2.card)
+		arr.append(self.card3.card)
+		arr.append(self.card4.card)
+		arr.append(self.card5.card)
+		return arr
+
 class Card:
 	def __init__(self, card):
 		self.card = ""
 		self.suit = ""
 		self.num = ""
 		if card[0] == 'c':
-			self.suit = "clubs"
+			self.suit = "Clubs"
 		elif card[0] == 's':
-			self.suit = "spades"
+			self.suit = "Spades"
 		elif card[0] == 'h':
-			self.suit = "hearts"
+			self.suit = "Hearts"
 		else: 
-			self.suit = "diamonds"
+			self.suit = "Diamonds"
 
 		self.card = str(card[1:])
 		if self.card == 'J':
@@ -109,29 +118,45 @@ def readHand(hand):
 def analyzeHand(HandObject):
 	suits = HandObject.suits()
 	cards = sorted(HandObject.cards())
+	nums = sorted(HandObject.num())
 
 	flush = checkFlush(suits)
 	straight = checkStraight(cards)
 	fullHouse = checkFullHouse(cards)
 
-	if straight and flush:
-		return "Straight Flush"
+	if straight and flush and cards[-1] == 14:
+		return "Royal Flush of %s" % (suits[0])
+	elif straight and flush:
+		return "Straight Flush of %s, %s high" % (suits[0], convert(cards[-1]))
 	elif straight:
-		return "Straight"
+		return "Straight, %s high" % (convert(cards[-1]))
 	elif flush:
-		return "Flush"
+		return "Flush of %s, %s high" % (suits[0], convert(cards[-1]))
 	elif checkQuad(cards):
-		return "Quad"
+		return "Quad %ss" % (convert(cards[2]))
 	elif checkFullHouse(cards):
-		return "Full House"
+		if cards[2] == cards[1]:
+			return "%ss full of %ss" % (convert(cards[2]), convert(cards[3]))
+		else:
+			return "%ss full of %ss" % (convert(cards[2]), convert(cards[1]))
 	elif checkTriple(cards):
-		return "Triple"
+		return "Triple %ss" % (convert(cards[2]))
 	elif checkTwoPair(cards):
-		return "Two Pair"
+		if cards[0] == cards[1] and cards[2] == cards[3]:
+			return "Two Pair, %ss and %ss" % (convert(cards[0]), convert(cards[2]))
+		else:
+			return "Two Pair, %ss and %ss" % (convert(cards[1]), convert(cards[3]))
 	elif checkPair(cards):
-		return "Pair"
+		if cards[0] == cards[1]:
+			return "Pair of %ss" % (convert(cards[0]))
+		elif cards[1] == cards[2]:git
+			return "Pair of %ss" % (convert(cards[1]))
+		elif cards[2] == cards[3]:
+			return "Pair of %ss" % (convert(cards[2]))
+		else:
+			return "Pair of %ss" % (convert(cards[3]))
 	else:
-		return "High Card"
+		return "High card, %s" % (convert(cards[-1]))
 
 generateSamples("samples.txt", 100000)
 checkHands("samples.txt", "analysis.txt")
