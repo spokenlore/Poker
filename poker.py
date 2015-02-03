@@ -4,7 +4,11 @@ from checks import *
 
 class Hand:
 	def __init__(self, hand):
+		if hand[-1] == '\n':
+			hand = hand[:-1]
+
 		fullhand = hand.split(" ")
+
 		self.card1 = Card(fullhand[0])
 		self.card2 = Card(fullhand[1])
 		self.card3 = Card(fullhand[2])
@@ -80,7 +84,7 @@ def initDeck():
 
 def generateSamples(filename, numSamples):
 	with open(filename, "w") as outputfile:
-		for x in xrange(0,numSamples+1):
+		for x in xrange(0,numSamples):
 			deck = initDeck()
 			openingHand = deck[0] + " " + deck[1] + " " + deck[2] + " " + deck[3] + " " + deck[4] + "\n"
 			outputfile.write(openingHand)
@@ -90,8 +94,12 @@ def checkHands(inputfile, outputfile):
 	with open(inputfile, 'r') as input:
 		with open(outputfile, 'w') as output:
 			while(hand):
-				hand = input.readline()
-				output.write(analyze(hand))
+				playerhand = input.readline()
+				if playerhand == '':
+					break
+				playerhand = Hand(playerhand)
+				output.write(analyzeHand(playerhand))
+				output.write("\n")
 
 def readHand(hand):
 	playerhand = Hand(hand)
@@ -100,21 +108,33 @@ def readHand(hand):
 
 def analyzeHand(HandObject):
 	suits = HandObject.suits()
-	cards = HandObject.cards()
+	cards = sorted(HandObject.cards())
 
 	flush = checkFlush(suits)
 	straight = checkStraight(cards)
-	straightflush = checkStraightFlush(straight, flush)
-	# quad = checkQuad(cards)
-	# triple = checkTriple(cards)
-	# twopair = checkTwoPair(cards)
-	# pair = checkPair(cards)
+	fullHouse = checkFullHouse(cards)
 
-	print suits
-	print cards
+	if straight and flush:
+		return "Straight Flush"
+	elif straight:
+		return "Straight"
+	elif flush:
+		return "Flush"
+	elif checkQuad(cards):
+		return "Quad"
+	elif checkFullHouse(cards):
+		return "Full House"
+	elif checkTriple(cards):
+		return "Triple"
+	elif checkTwoPair(cards):
+		return "Two Pair"
+	elif checkPair(cards):
+		return "Pair"
+	else:
+		return "High Card"
 
+generateSamples("samples.txt", 100000)
+checkHands("samples.txt", "analysis.txt")
 
-# readHands("samples.txt", "analysis.txt")
-# readHand("c4 s5 h6 d10 cA")
-currentHand = readHand("c4 s5 h6 d10 cA")
-analyzeHand(currentHand)
+# currentHand = readHand("d7 d8 d6 d10 d9")
+# print analyzeHand(currentHand)
