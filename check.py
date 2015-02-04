@@ -1,7 +1,3 @@
-import random, io, os
-
-from checks import *
-
 class Hand:
 	def __init__(self, hand):
 		if hand[-1] == '\n':
@@ -77,45 +73,8 @@ class Card:
 			self.num = int(self.card)
 	def display(self):
 		print self.card + " of " + self.suit
-
-def initDeck():
-	deck = []
-	suits = ["d", "c", "h", "s"]
-	cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
-	for x in suits:
-		for y in cards:
-			deck.append(x+str(y))
-	newdeck = []
-	for y in deck:
-		drop = int(random.random()*len(deck))
-		newdeck.append(deck[drop])
-	return newdeck
-
-def generateSamples(filename, numSamples):
-	with open(filename, "w") as outputfile:
-		for x in xrange(0,numSamples):
-			deck = initDeck()
-			openingHand = deck[0] + " " + deck[1] + " " + deck[2] + " " + deck[3] + " " + deck[4] + "\n"
-			outputfile.write(openingHand)
-
-def checkHands(inputfile, outputfile):
-	hand = 1
-	with open(inputfile, 'r') as input:
-		with open(outputfile, 'w') as output:
-			while(hand):
-				playerhand = input.readline()
-				if playerhand == '':
-					break
-				playerhand = Hand(playerhand)
-				output.write(analyzeHand(playerhand))
-				output.write("\n")
-
-def readHand(hand):
-	playerhand = Hand(hand)
-	# playerhand.display()
-	return playerhand
-
-def analyzeHand(HandObject):
+		
+def bestSet(HandObject):
 	suits = HandObject.suits()
 	cards = sorted(HandObject.cards())
 	nums = sorted(HandObject.num())
@@ -149,7 +108,7 @@ def analyzeHand(HandObject):
 	elif checkPair(cards):
 		if cards[0] == cards[1]:
 			return "Pair of %ss" % (convert(cards[0]))
-		elif cards[1] == cards[2]:git
+		elif cards[1] == cards[2]:
 			return "Pair of %ss" % (convert(cards[1]))
 		elif cards[2] == cards[3]:
 			return "Pair of %ss" % (convert(cards[2]))
@@ -158,8 +117,74 @@ def analyzeHand(HandObject):
 	else:
 		return "High card, %s" % (convert(cards[-1]))
 
-generateSamples("samples.txt", 100000)
-checkHands("samples.txt", "analysis.txt")
+def winningHands(inputfile, outputfile):
+	hand = 1
+	with open(inputfile, 'r') as input:
+		with open(outputfile, 'w') as output:
+			while(hand):
+				playerhand = input.readline()
+				if playerhand == '':
+					break
+				playerhand = Hand(playerhand)
+				output.write(bestSet(playerhand))
+				output.write("\n")
 
-# currentHand = readHand("d7 d8 d6 d10 d9")
-# print analyzeHand(currentHand)
+def checkFlush(suits):
+	suit1 = suits[0]
+
+	for x in suits:
+		if x != suit1:
+			return False
+	return True
+
+def checkStraight(cards):
+	if int(cards[0])+4 == int(cards[1])+3 == int(cards[2])+2 == int(cards[3])+1 == int(cards[4]):
+		return True
+	else:
+		return False
+
+def checkQuad(cards):
+	if cards[0] == cards[1] == cards[2] == cards[3] or cards[1] == cards[2] == cards[3] == cards[4]:
+		return True
+	else:
+		return False
+
+def checkTriple(cards):
+	if (cards[0] == cards[1] == cards[2]) or (cards[1] == cards[2] == cards[3]) or (cards[2] == cards[3] == cards[4]):
+		return True
+	else:
+		return False
+
+def checkTwoPair(cards):
+	if cards[0] == cards[1] and cards[2] == cards[3]:
+		return True
+	elif cards[1] == cards[2] and cards[3] == cards[4]:
+		return True
+	else:
+		return False
+
+def checkFullHouse(cards):
+	if (cards[0] == cards[1] == cards[2]) and (cards[3] == cards[4]):
+		return True
+	elif (cards[0] == cards[1]) and (cards[2] == cards[3] == cards[4]):
+		return True
+	else:
+		return False
+
+def checkPair(cards):
+	if cards[0] == cards[1] or cards[1] == cards[2] or cards[2] == cards[3] or cards[3] == cards[4]:
+		return True
+	else:
+		return False
+
+def convert(card):
+	if card == 14:
+		return 'A'
+	elif card == 13:
+		return 'K'
+	elif card == 12:
+		return 'Q'
+	elif card == 11:
+		return 'J'
+	else:
+		return card
