@@ -8,9 +8,10 @@ def initDeck():
 		for y in cards:
 			deck.append(x+str(y))
 	newdeck = []
-	for y in deck:
+	for y in xrange(0,52):
 		drop = int(random.random()*len(deck))
 		newdeck.append(deck[drop])
+		deck.pop(drop)
 	return newdeck
 
 def generateSamples(filename, numSamples):
