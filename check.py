@@ -1,15 +1,3 @@
-RoyalFlush = 0
-StraightFlush = 0
-Quads = 0
-FullHouse = 0
-Flush = 0
-Straight = 0
-Triples = 0
-TwoPairs = 0
-Pairs = 0
-HighCard = 0
-TotalHands = 0
-
 class Hand:
 	def __init__(self, hand):
 		if hand[-1] == '\n':
@@ -87,9 +75,6 @@ class Card:
 		print self.card + " of " + self.suit
 		
 def bestSet(HandObject):
-	global RoyalFlush, StraightFlush, Quads, FullHouse, Flush, Straight
-	global Triples, TwoPairs, Pairs, HighCard, TotalHands
-
 	suits = HandObject.suits()
 	cards = sorted(HandObject.cards())
 	nums = sorted(HandObject.num())
@@ -98,40 +83,29 @@ def bestSet(HandObject):
 	straight = checkStraight(cards)
 	fullHouse = checkFullHouse(cards)
 
-	TotalHands += 1
-
 	if straight and flush and cards[-1] == 14:
-		RoyalFlush += 1
 		return "Royal Flush of %s" % (suits[0])
 	elif straight and flush:
-		StraightFlush += 1
 		return "Straight Flush of %s, %s high" % (suits[0], convert(cards[-1]))
 	elif straight:
-		Straight += 1
 		return "Straight, %s high" % (convert(cards[-1]))
 	elif flush:
-		Flush += 1
 		return "Flush of %s, %s high" % (suits[0], convert(cards[-1]))
 	elif checkQuad(cards):
-		Quads += 1
 		return "Quad %ss" % (convert(cards[2]))
 	elif checkFullHouse(cards):
-		FullHouse += 1
 		if cards[2] == cards[1]:
 			return "%ss full of %ss" % (convert(cards[2]), convert(cards[3]))
 		else:
 			return "%ss full of %ss" % (convert(cards[2]), convert(cards[1]))
 	elif checkTriple(cards):
-		Triples += 1
 		return "Triple %ss" % (convert(cards[2]))
 	elif checkTwoPair(cards):
-		TwoPairs += 1
 		if cards[0] == cards[1] and cards[2] == cards[3]:
 			return "Two Pair, %ss and %ss" % (convert(cards[0]), convert(cards[2]))
 		else:
 			return "Two Pair, %ss and %ss" % (convert(cards[1]), convert(cards[3]))
 	elif checkPair(cards):
-		Pairs += 1
 		if cards[0] == cards[1]:
 			return "Pair of %ss" % (convert(cards[0]))
 		elif cards[1] == cards[2]:
@@ -141,7 +115,6 @@ def bestSet(HandObject):
 		else:
 			return "Pair of %ss" % (convert(cards[3]))
 	else:
-		HighCard += 1
 		return "High card, %s" % (convert(cards[-1]))
 
 def winningHands(inputfile, outputfile):
@@ -215,17 +188,3 @@ def convert(card):
 		return 'J'
 	else:
 		return card
-
-def displayCombinations(outputfile):
-	with open(outputfile, 'w') as output:
-		output.write("%s: %s\n" % ("Royal Flushes", RoyalFlush))
-		output.write("%s: %s\n" % ("Straight Flushes", StraightFlush))
-		output.write("%s: %s\n" % ("Quadruples", Quads))
-		output.write("%s: %s\n" % ("Full Houses", FullHouse))
-		output.write("%s: %s\n" % ("Flushes", Flush))
-		output.write("%s: %s\n" % ("Straights", Straight))
-		output.write("%s: %s\n" % ("Triples", Triples))
-		output.write("%s: %s\n" % ("Two Pairs", TwoPairs))
-		output.write("%s: %s\n" % ("Pairs", Pairs))
-		output.write("%s: %s\n" % ("High Cards", HighCard))
-		output.write("%s: %s" % ("Total Hands", TotalHands))
