@@ -11,7 +11,7 @@ import random, io, os, operator, time
 def main():
 	start = time.time()
 	# Generates samples using filename, and number of hands
-	generateSamples("sampleHands.txt", 100000)
+	generateSamples("sampleHands.txt", 100000, "nextCards.txt")
 	# Takes inputfile of sample hands, and outputs a file with the 'winning' hand of those cards
 	winningHands("sampleHands.txt", "winningHands.txt")
 	# Outputs combinations of each type of hand to a target outputfile

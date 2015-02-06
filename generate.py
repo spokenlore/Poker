@@ -8,18 +8,21 @@ def initDeck():
 		for y in cards:
 			deck.append(x+str(y))
 	newdeck = []
-	for y in xrange(0,52):
+	for y in xrange(0,11):
 		drop = int(random.random()*len(deck))
 		newdeck.append(deck[drop])
 		deck.pop(drop)
 	return newdeck
 
-def generateSamples(filename, numSamples):
+def generateSamples(filename, numSamples, nextCardsFile):
 	with open(filename, "w") as outputfile:
-		for x in xrange(0,numSamples):
-			deck = initDeck()
-			openingHand = deck[0] + " " + deck[1] + " " + deck[2] + " " + deck[3] + " " + deck[4] + "\n"
-			outputfile.write(openingHand)
+		with open(nextCardsFile, "w") as nextCardsOutput: 
+			for x in xrange(0,numSamples):
+				deck = initDeck()
+				openingHand = deck[0] + " " + deck[1] + " " + deck[2] + " " + deck[3] + " " + deck[4] + "\n"
+				nextCards = deck[6] + " " + deck[7] + " " + deck[8] + " " + deck[9] + " " + deck[10] + "\n"
+				outputfile.write(openingHand)
+				nextCardsOutput.write(nextCards)
 
 # Simple display test program of format
 # s = suit, c = card
